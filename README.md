@@ -1,4 +1,4 @@
-#Updates:
+#Updates: Apri l6 2024
  - Removed CTI dependencies so that this version of PyMARS (DRGEP only) works with Cantera 3.
  - Added access to Cantera's adaptive pre-conditioner for constant pressure reactors.
  - To do: Revise the rest of the code to ensure full functionality.
