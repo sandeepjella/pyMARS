@@ -6,8 +6,9 @@ import logging
 
 import numpy as np
 import cantera as ct
-from cantera import ck2cti
-
+#from cantera import ck2cti
+from cantera import ck2yaml
+from cantera import yaml2ck
 from . import soln2ck
 
 
@@ -217,20 +218,20 @@ def convert(model_file, thermo_file=None, transport_file=None, path=''):
     # Chemkin files can have multiple extensions, so easier to check if Cantera
     if extension == '.cti':
         # Convert from Cantera to Chemkin format.
-        logging.info('Converter detected Cantera input model: ' + model_file)
-        logging.info('Converting to Chemkin format.')
+        print('Converter detected CTI Cantera input model: ' + model_file)
+        print('Converting to Chemkin format.')
 
         solution = ct.Solution(model_file)
         converted_files = soln2ck.write(solution, basename + '.inp', path=path)
         return converted_files
     else:
         # Convert from Chemkin to Cantera format.
-        logging.info('Converter detected Chemkin input model: ' + model_file)
-        logging.info('Converting to Cantera format.')
+        print('Converter detected Chemkin input model: ' + model_file)
+        print('Converting to Cantera format.')
 
-        converted_file = os.path.join(path, basename + '.cti')
+        converted_file = os.path.join(path, basename + '.yaml')
 
-        # calls ck2cti based on given files
+        # calls ck2yaml based on given files
         args = [f'--input={model_file}']
         if thermo_file:
             args.append(f'--thermo={thermo_file}')
@@ -241,5 +242,5 @@ def convert(model_file, thermo_file=None, transport_file=None, path=''):
         # generally Chemkin files have issues (redundant species, etc.) that require this argument
         args.append('--permissive')
 
-        ck2cti.main(args)
+        ck2yaml.main(args)
         return converted_file

@@ -5,7 +5,7 @@ import logging
 from argparse import ArgumentParser
 from typing import List, Dict, NamedTuple
 
-import ruamel_yaml as yaml
+import yaml
 import cantera as ct
 
 # local imports
@@ -33,7 +33,7 @@ class ReductionInputs(NamedTuple):
     target_species: List[str]
     safe_species: List[str] = []
     sensitivity_analysis: bool = False
-    upper_threshold: float = 0.4
+    upper_threshold: float = 0.1
     sensitivity_type: str = 'greedy'
     phase_name: str = ''
 
@@ -73,10 +73,7 @@ def parse_inputs(input_dict):
             'At least one "target" species must be specified for graph-based reduction methods.'
             )
     
-    upper_threshold = input_dict.get('upper-threshold', None)
-    if not upper_threshold and sensitivity_analysis:
-        logging.info('Warning: using default upper threshold value (0.1)')
-        upper_threshold = 0.1
+    upper_threshold = input_dict.get('upper-threshold', 0.1)
     sensitivity_type = input_dict.get('sensitivity-type', 'initial')
 
     safe_species = input_dict.get('retained-species', [])
@@ -308,7 +305,7 @@ def pymars(argv):
         inputs = parse_inputs(input_dict)
 
         # Check for Chemkin format and convert if needed
-        if os.path.splitext(inputs.model)[1] != '.cti':
+        if os.path.splitext(inputs.model)[1] != '.yaml':
             logging.info('Chemkin file detected; converting before reduction.')
             inputs.model = convert(inputs.model, args.thermo, args.transport, args.path)
 
